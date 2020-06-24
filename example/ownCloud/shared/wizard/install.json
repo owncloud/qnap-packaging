@@ -1,0 +1,226 @@
+{
+  "api_version": "v1",
+  "title": "{{OWNCLOUD_NAME}}",
+  "wizard": [
+    {
+      "title": "{{OWNCLOUD_BASE_PAGE}}",
+      "schema": {
+        "hostname": {
+          "title": "{{OWNCLOUD_HOST}}",
+          "type": "string",
+          "pattern": "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$",
+          "description": "{{OWNCLOUD_HOST_DESC}}",
+          "validationMessage": "{{OWNCLOUD_HOST_MSG}}",
+          "required": false
+        },
+        "http_port": {
+          "title": "HTTP Port",
+          "type": "integer",
+          "description": "{{OWNCLOUD_WEB_HOST_PORT_DESC}}",
+          "minimum": 1,
+          "maximum": 65535,
+          "required": true
+        },
+        "ssh_port": {
+          "title": "SSH Port",
+          "type": "integer",
+          "description": "{{OWNCLOUD_SSH_HOST_PORT_DESC}}",
+          "minimum": 1,
+          "maximum": 65535,
+          "required": true
+        },
+        "root_email": {
+          "title": "{{OWNCLOUD_ROOT_EMAIL}}",
+          "type": "string",
+          "pattern": "^\\S+@\\S+\\.\\S+$",
+          "description": "{{OWNCLOUD_ROOT_EMAIL_DESC}}",
+          "validationMessage": "{{OWNCLOUD_ROOT_EMAIL_MSG}}",
+          "required": false
+        }
+      },
+      "form": [
+        {
+          "key": "hostname",
+          "placeholder": "localhost"
+        },
+        "http_port",
+        "ssh_port",
+        "root_email"
+      ]
+    },
+    {
+      "title": "{{OWNCLOUD_SMTP_PAGE}}",
+      "schema": {
+        "smtp_enabled": {
+          "title": "{{OWNCLOUD_SMTP_ENABLED}}",
+          "type": "boolean",
+          "description": "{{OWNCLOUD_SMTP_ENABLED_DESC}}",
+          "required": true
+        },
+        "smtp_host": {
+          "title": "{{OWNCLOUD_SMTP_HOST}}",
+          "type": "string",
+          "description": "{{OWNCLOUD_SMTP_HOST_DESC}}",
+          "required": true
+        },
+        "smtp_port": {
+          "title": "{{OWNCLOUD_SMTP_PORT}}",
+          "type": "integer",
+          "description": "{{OWNCLOUD_SMTP_PORT_DESC}}",
+          "minimum": 1,
+          "maximum": 65535,
+          "required": true
+        },
+        "smtp_user": {
+          "title": "{{OWNCLOUD_SMTP_USER}}",
+          "type": "string",
+          "description": "{{OWNCLOUD_SMTP_USER_DESC}}"
+        },
+        "smtp_pass": {
+          "title": "{{OWNCLOUD_SMTP_PASS}}",
+          "type": "string",
+          "description": "{{OWNCLOUD_SMTP_PASS_DESC}}"
+        },
+        "smtp_tls": {
+          "title": "{{OWNCLOUD_SMTP_TLS}}",
+          "type": "boolean",
+          "description": "{{OWNCLOUD_SMTP_TLS_DESC}}",
+          "required": true
+        }
+      },
+      "form": [
+        {
+          "key": "smtp_enabled",
+          "labelHtmlClass": "hide"
+        },
+        {
+          "key": "smtp_host",
+          "condition": "model.smtp_enabled"
+        },
+        {
+          "key": "smtp_port",
+          "condition": "model.smtp_enabled"
+        },
+        {
+          "key": "smtp_user",
+          "condition": "model.smtp_enabled"
+        },
+        {
+          "key": "smtp_pass",
+          "type": "password",
+          "condition": "model.smtp_enabled"
+        }
+      ]
+    },
+    {
+      "title": "{{OWNCLOUD_LDAP_PAGE}}",
+      "schema": {
+        "ldap_enabled": {
+          "title": "{{OWNCLOUD_LDAP_ENABLED}}",
+          "type": "boolean",
+          "description": "{{OWNCLOUD_LDAP_ENABLED_DESC}}",
+          "required": true
+        },
+        "ldap_label": {
+          "title": "{{OWNCLOUD_LDAP_LABEL}}",
+          "type": "string",
+          "description": "{{OWNCLOUD_LDAP_LABEL_DESC}}",
+          "required": true
+        },
+        "ldap_host": {
+          "title": "{{OWNCLOUD_LDAP_HOST}}",
+          "type": "string",
+          "description": "{{OWNCLOUD_LDAP_HOST_DESC}}",
+          "required": true
+        },
+        "ldap_port": {
+          "title": "{{OWNCLOUD_LDAP_PORT}}",
+          "type": "integer",
+          "description": "{{OWNCLOUD_LDAP_PORT_DESC}}",
+          "minimum": 1,
+          "maximum": 65535,
+          "required": true
+        },
+        "ldap_bind_dn": {
+          "title": "{{OWNCLOUD_LDAP_BIND_DN}}",
+          "type": "string",
+          "description": "{{OWNCLOUD_LDAP_BIND_DN_DESC}}",
+          "required": true
+        },
+        "ldap_pass": {
+          "title": "{{OWNCLOUD_LDAP_PASS}}",
+          "type": "string",
+          "description": "{{OWNCLOUD_LDAP_PASS_DESC}}",
+          "required": true
+        },
+        "ldap_base": {
+          "title": "{{OWNCLOUD_LDAP_BASE}}",
+          "type": "string",
+          "description": "{{OWNCLOUD_LDAP_BASE_DESC}}",
+          "required": true
+        }
+      },
+      "form": [
+        {
+          "key": "ldap_enabled",
+          "labelHtmlClass": "hide"
+        },
+        {
+          "key": "ldap_label",
+          "condition": "model.ldap_enabled"
+        },
+        {
+          "key": "ldap_host",
+          "condition": "model.ldap_enabled"
+        },
+        {
+          "key": "ldap_port",
+          "condition": "model.ldap_enabled"
+        },
+        {
+          "key": "ldap_bind_dn",
+          "condition": "model.ldap_enabled"
+        },
+        {
+          "key": "ldap_pass",
+          "type": "password",
+          "condition": "model.ldap_enabled"
+        },
+        {
+          "key": "ldap_base",
+          "condition": "model.ldap_enabled"
+        }
+      ]
+    }
+  ],
+  "binding": {
+    "type": "yaml",
+    "file": "docker-compose.yml",
+    "data": {
+      "hostname": "services.OWNCLOUD.environment.OWNCLOUD_HOST",
+      "http_port": [
+        "services.OWNCLOUD.ports[0]",
+        "services.gitlab.environment.GITLAB_PORT"
+      ],
+      "ssh_port": [
+        "services.owncloud.environment.GITLAB_SSH_PORT",
+        "services.owncloud.ports[1]"
+      ],
+      "root_email": "services.owncloud.environment.GITLAB_ROOT_EMAIL",
+      "smtp_enabled": "services.owncloud.environment.SMTP_ENABLED",
+      "smtp_host": "services.owncloud.environment.SMTP_HOST",
+      "smtp_port": "services.owncloud.environment.SMTP_PORT",
+      "smtp_user": "services.owncloud.environment.SMTP_USER",
+      "smtp_pass": "services.owncloud.environment.SMTP_PASS",
+      "smtp_tls": "services.owncloud.environment.SMTP_TLS",
+      "ldap_enabled": "services.owncloud.environment.LDAP_ENABLED",
+      "ldap_label": "services.owncloud.environment.LDAP_LABEL",
+      "ldap_host": "services.owncloud.environment.LDAP_HOST",
+      "ldap_port": "services.owncloud.environment.LDAP_PORT",
+      "ldap_bind_dn": "services.owncloud.environment.LDAP_BIND_DN",
+      "ldap_pass": "services.owncloud.environment.LDAP_PASS",
+      "ldap_base": "services.owncloud.environment.LDAP_BASE"
+    },
+    "template": ["*.tpl"]
+  }
+}
