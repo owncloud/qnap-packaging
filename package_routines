@@ -135,7 +135,7 @@ pkg_pre_install(){
 	}
     #Create oclicense folder
 	mkdir -p ~/oclicense
-	echo "*/5 * * * * /usr/local/bin/qlicense_tool installed_get -i 5ed78f9570728e3c6b2951c4 >> /oclicense/oclicense.json" > /etc/config/crontab
+	echo "*/5 * * * * /usr/local/bin/qlicense_tool installed_get -i 5ed78f9570728e3c6b2951c4 > /oclicense/oclicense.json" >> /etc/config/crontab
     crontab /etc/config/crontab
 
 	# Official QPKG will enable it when installed
