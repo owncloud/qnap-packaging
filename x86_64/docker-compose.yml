@@ -2,7 +2,7 @@ version: '3'
 
 services:
   owncloud:
-    image: owncloud/qnap:10.6.0
+    image: owncloud/qnap:10.6.0@sha256:dbbbff16d772542f5c34fc258c37e671eadc4140a5f023bd88315fc30fbe64e1
     restart: always
     ports:
       - 8810:8080
@@ -25,7 +25,7 @@ services:
       - ${PWD}/data/owncloud:/mnt/data
 
   db:
-    image: webhippie/mariadb:latest
+    image: webhippie/mariadb:latest@sha256:8a2c927529e5fd6238f08f79e3855d90a353e4475481574aa4bf0b90550b5db9
     restart: always
     environment:
       - MARIADB_ROOT_PASSWORD=owncloud
@@ -39,7 +39,7 @@ services:
       - ${PWD}/data/backup:/var/lib/backup
 
   redis:
-    image: webhippie/redis:latest
+    image: webhippie/redis:latest@sha256:42f6d51be6a7a5ef6fb672e98507824816566f0b1f89c19b2d585f54e26b2529
     restart: always
     environment:
       - REDIS_DATABASES=1
