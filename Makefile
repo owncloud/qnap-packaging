@@ -1,5 +1,5 @@
-SHELL              := /bin/bash
-BUILDER_IMAGE_NAME := qnap/qpkg-builder
+SHELL              := /bin/sh
+BUILDER_IMAGE_NAME := owncloudci/qnap-qpkg-builder
 BUILD_DIR          := build
 SUPPORT_ARCH       := x86_64
 CODESIGNING_TOKEN  ?=
@@ -9,26 +9,23 @@ COLOR_BLUE         := \033[34m
 COLOR_RESET        := \033[0m
 
 .PHONY: build
-build: docker-builder
+build: docker-images _build
+
+.PHONY: build-qpkg-only
+build-qpkg-only: _build
+
+.PHONY: _build
+_build:
 	@if [ ! -f /.dockerenv ]; then \
 		docker run --rm -t --name=build-owncloud-qpkg-$$$$ \
 			-e QNAP_CODESIGNING_TOKEN=$(CODESIGNING_TOKEN) \
 			-v /var/run/docker.sock:/var/run/docker.sock \
 			-v $(PWD):/work \
 			$(BUILDER_IMAGE_NAME) make _build; \
-	else \
-		$(MAKE) -$(MAKEFLAGS) _build; \
-	fi
-
-.PHONY: _build
-_build: docker-images
-	@echo -e "$(COLOR_BLUE)### Build QPKG ...$(COLOR_RESET)"
-	/usr/share/qdk2/QDK/bin/qbuild --build-dir $(BUILD_DIR)
-
-.PHONY: docker-builder
-docker-builder:
-	@echo -e "$(COLOR_BLUE)### Prepare QPKG builder: $(BUILDER_IMAGE_NAME)$(COLOR_RESET)"
-	docker build -t $(BUILDER_IMAGE_NAME) .
+    else \
+		echo -e "$(COLOR_BLUE)### Build QPKG ...$(COLOR_RESET)"; \
+		/usr/share/qdk2/QDK/bin/qbuild --build-dir $(BUILD_DIR); \
+    fi
 
 .PHONY: docker-images
 docker-images: docker-images-linux_amd64 docker-images-linux_arm_v7
@@ -37,26 +34,24 @@ docker-images: docker-images-linux_amd64 docker-images-linux_arm_v7
 docker-images-linux_amd64:
 	rm -rf data/linux_amd64/docker-images
 	@for img in $(shell awk -F'image: ' '/image:/ {print $$2}' data/linux_amd64/docker-compose.yml); do \
-		tarball=$$(echo $${img} | sed -e 's?/?-?' -e 's?:?_?').tar; \
-		echo -e "$(COLOR_BLUE)### Download container image: $${img}$(COLOR_RESET)"; \
-		docker pull $${img}; \
+		ref=$$(echo $${img} | sed -e 's/\(:\).*\(@\)/\1\2/' | sed 's/://'); \
+		tarball=$${img//[^[:alnum:]]/_}.tar; \
 		echo -e "$(COLOR_YELLOW)### Save container image to a tar archive: $${tarball}$(COLOR_RESET)"; \
 		mkdir -p data/linux_amd64/docker-images; \
 		echo $${img} >> data/linux_amd64/docker-images/DOCKER_IMAGES; \
-		docker save -o data/linux_amd64/docker-images/$${tarball} $${img}; \
+		skopeo --insecure-policy copy docker://$${ref} docker-archive:./data/linux_amd64/docker-images/$${tarball}; \
 	done
 
 .PHONY: docker-images-linux_arm_v7
 docker-images-linux_arm_v7:
 	rm -rf data/linux_arm_v7/docker-images
 	@for img in $(shell awk -F'image: ' '/image:/ {print $$2}' data/linux_arm_v7/docker-compose.yml); do \
-		tarball=$$(echo $${img} | sed -e 's?/?-?' -e 's?:?_?').tar; \
-		echo -e "$(COLOR_BLUE)### Download container image: $${img}$(COLOR_RESET)"; \
-		docker pull $${img}; \
+		ref=$$(echo $${img} | sed -e 's/\(:\).*\(@\)/\1\2/' | sed 's/://'); \
+		tarball=$${img//[^[:alnum:]]/_}.tar; \
 		echo -e "$(COLOR_YELLOW)### Save container image to a tar archive: $${tarball}$(COLOR_RESET)"; \
 		mkdir -p data/linux_arm_v7/docker-images; \
 		echo $${img} >> data/linux_arm_v7/docker-images/DOCKER_IMAGES; \
-		docker save -o data/linux_arm_v7/docker-images/$${tarball} $${img}; \
+		skopeo --insecure-policy copy docker://$${ref} docker-archive:./data/linux_arm_v7/docker-images/$${tarball}; \
 	done
 
 .PHONY: clean
