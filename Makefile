@@ -11,7 +11,7 @@ COLOR_RESET        := \033[0m
 .PHONY: build
 build: docker-builder
 	@if [ ! -f /.dockerenv ]; then \
-		docker run --rm -t --name=build-owncloud-qpkg-$$$$ \
+		docker run --user $(id -u) --rm -t --name=build-owncloud-qpkg-$$$$ \
 			-e QNAP_CODESIGNING_TOKEN=$(CODESIGNING_TOKEN) \
 			-v /var/run/docker.sock:/var/run/docker.sock \
 			-v $(PWD):/work \
