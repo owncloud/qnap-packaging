@@ -1,4 +1,4 @@
- ######################################################################
+######################################################################
 # List of available definitions (it's not necessary to uncomment them)
 ######################################################################
 ###### Command definitions #####
@@ -34,8 +34,6 @@
 #CMD_WLOG="/sbin/write_log"
 #CMD_XARGS="/usr/bin/xargs"
 #CMD_7Z="/usr/local/sbin/7z"
-## Path to ipkg or opkg package tool if installed.
-#CMD_PKG_TOOL=
 #
 ###### System definitions #####
 #SYS_EXTRACT_DIR="$(pwd)"
@@ -64,6 +62,7 @@
 #SYS_QPKG_CONF_FIELD_SERVICEPORT="Service_Port"
 #SYS_QPKG_CONF_FIELD_SERVICE_PIDFILE="Pid_File"
 #SYS_QPKG_CONF_FIELD_AUTHOR="Author"
+#SYS_QPKG_CONF_FIELD_RC_NUMBER="RC_Number"
 ## The following variables are assigned values at run-time.
 #SYS_HOSTNAME=$($CMD_HOSTNAME)
 ## Data file name (one of SYS_QPKG_DATA_FILE_GZIP, SYS_QPKG_DATA_FILE_BZIP2,
@@ -77,6 +76,8 @@
 #SYS_QPKG_DIR=""
 ## If the QPKG should be enabled or disabled after the installation/upgrade.
 #SYS_QPKG_SERVICE_ENABLED=""
+## Architecture of the device the QPKG is installed on.
+#SYS_CPU_ARCH=""
 ## Name and location of system shares
 #SYS_PUBLIC_SHARE=""
 #SYS_PUBLIC_PATH=""
@@ -90,6 +91,8 @@
 #SYS_USB_PATH=""
 #SYS_WEB_SHARE=""
 #SYS_WEB_PATH=""
+## Path to ipkg or opkg package tool if installed.
+#CMD_PKG_TOOL=
 #
 ######################################################################
 # All package specific functions shall call 'err_log MSG' if an error
@@ -116,7 +119,6 @@
 #pkg_init(){
 #}
 #
-
 ######################################################################
 # Define any package specific requirement checks that shall be
 # performed before the package is installed.
@@ -128,28 +130,22 @@
 # Define any package specific operations that shall be performed when
 # the package is installed.
 ######################################################################
-pkg_pre_install(){
-	err_log() {
-		local write_msg="$CMD_LOG_TOOL -t2 -uSystem -p127.0.0.1 -mlocalhost -a"
-		[ -n "$1" ] && $CMD_ECHO "$1" && $write_msg "$1"
-	}
-    #Create oclicense folder
-	mkdir -p ~/oclicense
-	echo "*/5 * * * * /usr/local/bin/qlicense_tool installed_get -i 5ed78f9570728e3c6b2951c4 > /oclicense/oclicense.json" >> /etc/config/crontab
-    crontab /etc/config/crontab
-
-	# Official QPKG will enable it when installed
-	SYS_QPKG_SERVICE_ENABLED="TRUE"
-	result=$(/usr/sbin/lsof -i :8810)
-	if [ -n "$result"  ] ;then
-		err_log "[App Center] ownCloud installation failed. Port 8810 occupied"
-		set_progress_fail
-		exit 1
-	fi
-}
+#pkg_pre_install(){
+#}
 #
 #pkg_install(){
 #}
-#
-#pkg_post_install(){
-#}
+
+pkg_post_install(){
+	. qpkg.cfg
+    QPKG_CONF=/etc/config/qpkg.conf
+
+    DEPEND_ON=container-station
+    /sbin/setcfg $QPKG_NAME depend_on "${DEPEND_ON}" -f $QPKG_CONF
+    /sbin/setcfg $QPKG_NAME Timeout "${QPKG_TIMEOUT}" -f $QPKG_CONF
+    [ -n "${QPKG_HEALTHY_CHECK_URL}" ] && \
+		  /sbin/setcfg $QPKG_NAME Healthy_Check_Url "${QPKG_HEALTHY_CHECK_URL}" -f $QPKG_CONF
+    [ -n "${QPKG_HEALTHY_CHECK_CMD}" ] && \
+		  /sbin/setcfg $QPKG_NAME Healthy_Check_Cmd "${QPKG_HEALTHY_CHECK_CMD}" -f $QPKG_CONF
+    INSTALL_PATH=$(/sbin/getcfg ${QPKG_NAME} Install_Path -f $QPKG_CONF)
+}

@@ -1,0 +1,5 @@
+{
+  "OWNCLOUD_NAME": "ownCloud 10.6.0",
+  "OWNCLOUD_BASE_PAGE": "Information",
+  "OWNCLOUD_WEB_HOST_PORT_DESC": "The internal port of your ownCloud web server. This port must be not used by any other software running on your QNAP device. Defaults to 11409."
+}

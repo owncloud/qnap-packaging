@@ -54,7 +54,7 @@ tags
 
 ### Custom files ###
 
-*/docker-images/
+data/*/docker-images/
 */data/
 build*/
 tmp*/
