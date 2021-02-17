@@ -1,4 +1,4 @@
-FROM owncloud/ubuntu:18.04
+FROM owncloud/ubuntu:20.04
 LABEL maintainer="consulting@owncloud.com"
 
 ARG QDK2_VER=0.29
