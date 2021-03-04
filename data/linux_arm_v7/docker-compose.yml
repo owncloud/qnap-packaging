@@ -1,0 +1,57 @@
+---
+version: '3'
+
+services:
+  owncloud:
+    image: owncloud/qnap:10.6.0@sha256:d46970eb2739502c830fb20ec3450a35a2558bca5b48aa959ded4d7741fa0b8a
+    platform: linux/arm/v7
+    restart: always
+    ports:
+      - "127.0.0.1:11409:8080"
+    depends_on:
+      - db
+      - redis
+    environment:
+      - OWNCLOUD_ADMIN_PASSWORD=admin
+      - OWNCLOUD_ADMIN_USERNAME=admin
+      - OWNCLOUD_DB_HOST=db
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=owncloud
+      - OWNCLOUD_DB_TYPE=pgsql
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_MYSQL_UTF8MB4=true
+      - OWNCLOUD_OVERWRITE_WEBROOT=/owncloud
+      - OWNCLOUD_REDIS_ENABLED=true
+      - OWNCLOUD_REDIS_HOST=redis
+    volumes:
+      - ${PWD}/data/owncloud:/mnt/data
+      - ${PWD}/licenses/:/mnt/licenses/
+      - ${PWD}/data/owncloud_tmp:/tmp
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 60s
+      timeout: 30s
+      retries: 5
+    logging:
+       driver: "local"
+
+  db:
+    image: postgres:13.2-alpine@sha256:de176f849feaf80556f303dca983d75e9b160a619d14b00186228e0f7e83f46c
+    platform: linux/arm/v7
+    environment:
+      - POSTGRES_DB=owncloud
+      - POSTGRES_PASSWORD=owncloud
+      - POSTGRES_USER=owncloud
+    volumes:
+      - ${PWD}/data/db:/var/lib/postgresql/data
+    logging:
+       driver: "local"
+
+  redis:
+    image: redis:6.2.0-alpine@sha256:f689f29a1007776d337e926bd62c2139f861bead255ad5452a1c9fba40a18c0d
+    platform: linux/arm/v7
+    restart: always
+    volumes:
+      - ${PWD}/data/redis:/data
+    logging:
+       driver: "local"
