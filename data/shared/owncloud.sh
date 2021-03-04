@@ -88,11 +88,11 @@ case "$1" in
     ;;
 
     debug-db-logs)
-        $CONTAINER_STATION_DIR/bin/system-docker-compose logs -f owncloud
+        $CONTAINER_STATION_DIR/bin/system-docker-compose logs -f db
     ;;
 
     debug-redis-logs)
-        $CONTAINER_STATION_DIR/bin/system-docker-compose logs -f owncloud
+        $CONTAINER_STATION_DIR/bin/system-docker-compose logs -f redis
     ;;
 
     *)
