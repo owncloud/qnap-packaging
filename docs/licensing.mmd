@@ -1,0 +1,70 @@
+sequenceDiagram
+%% @config{./mermaid_config.json}
+%% @backgroundColor{#FFFFFF}
+    autonumber
+    participant QNAP User
+    participant App Store
+    participant ownCloud Install Hooks
+    participant Sys Init
+    participant ownCloud App
+    participant QNAP oC License
+    participant QLicense Manager
+    participant QNAP Cron
+    participant oC Cron
+
+    QNAP User->>App Store: Install ownCloud app
+    activate App Store
+        App Store->>App Store: Download ownCloud app
+        App Store->>ownCloud Install Hooks: pkg_pre_install()
+        activate ownCloud Install Hooks
+            ownCloud Install Hooks->> QNAP Cron: create export license crontab
+        deactivate ownCloud Install Hooks
+        App Store-->>QNAP User: installed
+    deactivate App Store
+
+    Sys Init->>ownCloud App: start
+
+    activate ownCloud App
+
+        Note left of QNAP User: Expose License to <br>  ownCloud in Docker
+        loop Every 5 minutes
+            QNAP Cron->>QLicense Manager: export license
+            QLicense Manager->>QNAP oC License: save to file
+        end
+
+        Note left of QNAP User: Enforce user <br> count limit
+        loop Every minute
+            oC Cron->>ownCloud App: "occ qnap:check-active-users"
+            activate ownCloud App
+                ownCloud App ->> QNAP oC License: load license file
+                ownCloud App->>ownCloud App: interpret license
+                alt license present && sku in allowed skus && now < valid until && now > valid from
+                    opt active users > licensed users
+                    ownCloud App->>ownCloud App: disable excess users
+                    ownCloud App-->>QNAP User: warning email
+                end
+                else default
+                opt active users > 5
+                    ownCloud App->>ownCloud App: disable excess users
+                    ownCloud App-->>QNAP User: warning email
+                end
+                end
+
+            deactivate ownCloud App
+        end
+
+        Note left of QNAP User: Decide between <br> EE / CE Edition
+        QNAP User->>ownCloud App: arbitrary request
+        activate ownCloud App
+            ownCloud App ->> QNAP oC License: load license file
+            ownCloud App->>ownCloud App: interpret license
+            alt license present && sku in allowed skus && now < valid until && now > valid from
+                ownCloud App->>ownCloud App: activate EE edition
+            else default
+                ownCloud App->>ownCloud App: use CE / deactivate EE edition
+            end
+            ownCloud App-->>QNAP User: answer request
+        deactivate ownCloud App
+
+
+    deactivate ownCloud App
