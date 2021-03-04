@@ -1,5 +1,5 @@
 ---
-version: '3'
+version: "3"
 
 services:
   owncloud:
@@ -33,7 +33,7 @@ services:
       timeout: 30s
       retries: 5
     logging:
-       driver: "local"
+      driver: "local"
 
   db:
     image: postgres:13.2-alpine@sha256:de176f849feaf80556f303dca983d75e9b160a619d14b00186228e0f7e83f46c
@@ -45,7 +45,7 @@ services:
     volumes:
       - ${PWD}/data/db:/var/lib/postgresql/data
     logging:
-       driver: "local"
+      driver: "local"
 
   redis:
     image: redis:6.2.0-alpine@sha256:f689f29a1007776d337e926bd62c2139f861bead255ad5452a1c9fba40a18c0d
@@ -54,4 +54,4 @@ services:
     volumes:
       - ${PWD}/data/redis:/data
     logging:
-       driver: "local"
+      driver: "local"
