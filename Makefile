@@ -31,34 +31,32 @@ docker-builder:
 	docker build -t $(BUILDER_IMAGE_NAME) .
 
 .PHONY: docker-images
-docker-images:
-# TODO reenable image packing??
-#docker-images: docker-images-x86_64 docker-images-arm32v7
+docker-images: docker-images-linux_amd64 docker-images-linux_arm_v7
 
-.PHONY: docker-images-x86_64
-docker-images-x86_64:
-	rm -rf data/x86_64/docker-images
-	@for img in $(shell awk -F'image: ' '/image:/ {print $$2}' data/x86_64/docker-compose.yml); do \
+.PHONY: docker-images-linux_amd64
+docker-images-linux_amd64:
+	rm -rf data/linux_amd64/docker-images
+	@for img in $(shell awk -F'image: ' '/image:/ {print $$2}' data/linux_amd64/docker-compose.yml); do \
 		tarball=$$(echo $${img} | sed -e 's?/?-?' -e 's?:?_?').tar; \
 		echo -e "$(COLOR_BLUE)### Download container image: $${img}$(COLOR_RESET)"; \
 		docker pull $${img}; \
 		echo -e "$(COLOR_YELLOW)### Save container image to a tar archive: $${tarball}$(COLOR_RESET)"; \
-		mkdir -p data/x86_64/docker-images; \
-		echo $${img} >> data/x86_64/docker-images/DOCKER_IMAGES; \
-		docker save -o data/x86_64/docker-images/$${tarball} $${img}; \
+		mkdir -p data/linux_amd64/docker-images; \
+		echo $${img} >> data/linux_amd64/docker-images/DOCKER_IMAGES; \
+		docker save -o data/linux_amd64/docker-images/$${tarball} $${img}; \
 	done
 
-.PHONY: docker-images-arm32v7
-docker-images-arm32v7:
-	rm -rf data/arm32v7/docker-images
-	@for img in $(shell awk -F'image: ' '/image:/ {print $$2}' data/arm32v7/docker-compose.yml); do \
+.PHONY: docker-images-linux_arm_v7
+docker-images-linux_arm_v7:
+	rm -rf data/linux_arm_v7/docker-images
+	@for img in $(shell awk -F'image: ' '/image:/ {print $$2}' data/linux_arm_v7/docker-compose.yml); do \
 		tarball=$$(echo $${img} | sed -e 's?/?-?' -e 's?:?_?').tar; \
 		echo -e "$(COLOR_BLUE)### Download container image: $${img}$(COLOR_RESET)"; \
 		docker pull $${img}; \
 		echo -e "$(COLOR_YELLOW)### Save container image to a tar archive: $${tarball}$(COLOR_RESET)"; \
-		mkdir -p data/arm32v7/docker-images; \
-		echo $${img} >> data/arm32v7/docker-images/DOCKER_IMAGES; \
-		docker save -o data/arm32v7/docker-images/$${tarball} $${img}; \
+		mkdir -p data/linux_arm_v7/docker-images; \
+		echo $${img} >> data/linux_arm_v7/docker-images/DOCKER_IMAGES; \
+		docker save -o data/linux_arm_v7/docker-images/$${tarball} $${img}; \
 	done
 
 .PHONY: clean
