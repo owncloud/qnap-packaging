@@ -20,7 +20,7 @@ _load_images() {
             $CONTAINER_STATION_DIR/bin/system-docker inspect $docker_image
             exit_status=$?
             if [ ! $exit_status -eq 0 ]; then
-                cat $OWNCLOUD_ROOT/docker-images/$(echo $docker_image | sed -e 's?/?-?' -e 's?:?_?').tar | $CONTAINER_STATION_DIR/bin/system-docker load
+                cat $OWNCLOUD_ROOT/docker-images/$(echo ${docker_image//[^[:alnum:]]/_}.tar) | $CONTAINER_STATION_DIR/bin/system-docker load
             fi
         done
     fi
@@ -37,12 +37,12 @@ ProxyRequests off
 ProxyPass /owncloud http://127.0.0.1:11409
 ProxyPassReverse /owncloud http://127.0.0.1:11409
 EOF
-    proxy_reload
+    _proxy_reload
 }
 
 _proxy_stop() {
     rm -f $QPKG_PROXY_FILE
-    proxy_reload
+    _proxy_reload
 }
 
 _register_license() {
@@ -51,9 +51,6 @@ _register_license() {
 
 case "$1" in
     start)
-        if ! qts_qpkg_is_enabled $QPKG_NAME; then
-            qts_error_exit "$QPKG_DISPLAY_NAME is disabled."
-        fi
         _register_license
         $0 get-licenses
         _load_images

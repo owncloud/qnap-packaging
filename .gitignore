@@ -58,3 +58,5 @@ data/*/docker-images/
 */data/
 build*/
 tmp*/
+
+.drone.yml
