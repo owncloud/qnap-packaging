@@ -57,7 +57,7 @@ def build(ctx):
         "depends_on": [],
         "trigger": {
             "ref": [
-                "refs/heads/main",
+                "refs/heads/master",
                 "refs/pull/**",
                 "refs/tags/**",
             ],
