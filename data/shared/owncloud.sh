@@ -37,12 +37,12 @@ ProxyRequests off
 ProxyPass /owncloud http://127.0.0.1:11409
 ProxyPassReverse /owncloud http://127.0.0.1:11409
 EOF
-    proxy_reload
+    _proxy_reload
 }
 
 _proxy_stop() {
     rm -f $QPKG_PROXY_FILE
-    proxy_reload
+    _proxy_reload
 }
 
 _register_license() {
@@ -51,9 +51,6 @@ _register_license() {
 
 case "$1" in
     start)
-        if ! qts_qpkg_is_enabled $QPKG_NAME; then
-            qts_error_exit "$QPKG_DISPLAY_NAME is disabled."
-        fi
         _register_license
         $0 get-licenses
         _load_images
