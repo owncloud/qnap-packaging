@@ -32,10 +32,34 @@ def build(ctx):
                     "ls -lah build",
                 ],
             },
+            {
+                "name": "release",
+                "image": "plugins/github-release:1",
+                "pull": "always",
+                "settings": {
+                    "api_key": {
+                        "from_secret": "github_token",
+                    },
+                    "files": [
+                        "build/*",
+                    ],
+                    "title": ctx.build.ref.replace("refs/tags/", ""),
+                    "overwrite": True,
+                    "prerelease": len(ctx.build.ref.split("-")) > 1,
+                },
+                "when": {
+                    "ref": [
+                        "refs/heads/main",
+                        "refs/pull/**",
+                        "refs/tags/**",
+                    ],
+                },
+            },
         ],
         "depends_on": [],
         "trigger": {
             "ref": [
+                "refs/heads/main",
                 "refs/pull/**",
                 "refs/tags/**",
             ],
