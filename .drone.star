@@ -49,8 +49,6 @@ def build(ctx):
                 },
                 "when": {
                     "ref": [
-                        "refs/heads/main",
-                        "refs/pull/**",
                         "refs/tags/**",
                     ],
                 },
