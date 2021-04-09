@@ -36,7 +36,7 @@ services:
       driver: "local"
 
   db:
-    image: postgres:13.2-alpine@sha256:de176f849feaf80556f303dca983d75e9b160a619d14b00186228e0f7e83f46c
+    image: postgres:13.2-alpine@sha256:21d435eefad33e2a39fdb8b7486997601f6c006ea707fba865da138ec61f6e70
     platform: linux/arm/v7
     environment:
       - POSTGRES_DB=owncloud
