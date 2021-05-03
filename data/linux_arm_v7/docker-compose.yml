@@ -23,6 +23,8 @@ services:
       - OWNCLOUD_REDIS_ENABLED=true
       - OWNCLOUD_REDIS_HOST=redis
       - OWNCLOUD_UPDATE_CHECKER=false
+      - OWNCLOUD_LICENSE_KEY=none
+      - OWNCLOUD_LICENSE_CLASS=OCA\QNAP\QnapLicense
     volumes:
       - ${PWD}/data/owncloud:/mnt/data
       - ${PWD}/licenses/:/mnt/licenses/
