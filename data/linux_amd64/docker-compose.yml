@@ -3,7 +3,7 @@ version: "3"
 
 services:
   owncloud:
-    image: owncloud/qnap:10.6.0-amd64@sha256:c5b10dfb29be8bfce3acfe54e3a533d9e36b581384e4c727e75bc26a19aaed0f
+    image: owncloud/qnap:10.7.0-amd64@sha256:288d8ad385a9a155022df3be2aff80c1d77e1753fc4b8556b4da4143598a15f9
     restart: always
     ports:
       - "127.0.0.1:11409:8080"
@@ -19,7 +19,7 @@ services:
       - OWNCLOUD_DB_TYPE=pgsql
       - OWNCLOUD_DB_USERNAME=owncloud
       - OWNCLOUD_MYSQL_UTF8MB4=true
-      - OWNCLOUD_OVERWRITE_WEBROOT=/owncloud
+      #- OWNCLOUD_OVERWRITE_WEBROOT=/owncloud
       - OWNCLOUD_REDIS_ENABLED=true
       - OWNCLOUD_REDIS_HOST=redis
       - OWNCLOUD_UPDATE_CHECKER=false
