@@ -24,7 +24,6 @@ services:
       - OWNCLOUD_LICENSE_CLASS=\OCA\QNAP\QnapLicense
     volumes:
       - ${PWD}/data/owncloud:/mnt/data
-      - ${PWD}/licenses/:/mnt/licenses/
       - ${PWD}/data/owncloud_tmp:/tmp
     healthcheck:
       test: ["CMD", "/usr/bin/healthcheck"]
