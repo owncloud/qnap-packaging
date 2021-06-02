@@ -49,7 +49,7 @@ services:
       driver: "local"
 
   redis:
-    image: arm32v7/redis:6.2.3-alpine@sha256:5b22718342af650c68d5fe7fe0423e02bc86f3dba1638d38e9118a13385af7f1
+    image: arm32v7/redis:6.2.4-alpine@sha256:2058bad3fd363e182f14f2bd2530d702eed29bd565b81b7ff32ee4b7db2680e0
     restart: always
     volumes:
       - ${PWD}/data/redis:/data
