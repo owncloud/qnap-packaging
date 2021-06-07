@@ -54,6 +54,9 @@ case "$1" in
         _register_license
         _load_images
 
+        mkdir -p data/owncloud_tmp
+        chmod data/owncloud_tmp
+
         $CONTAINER_STATION_DIR/bin/system-docker-compose up -d --remove-orphans
 
         grep -qF "$CRON_JOB" "$CRON_FILE"  || echo "$CRON_JOB" | tee -a "$CRON_FILE"
