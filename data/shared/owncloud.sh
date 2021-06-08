@@ -87,13 +87,15 @@ case "$1" in
 
     license-handler)
         qlicense="$(qlicense_tool installed_list -a $QPKG_NAME)"
-        count="$(echo $qlicense | jq -r '.result' | jq length)"
+        count="$(echo $qlicense | jq -r '.result' | jq -r 'map(select(.status == "valid"))' | jq length)"
 
+        DC="$CONTAINER_STATION_DIR/bin/system-docker-compose exec -T owncloud"
+        LOG_FILE=/dev/null
         if [ "$count" -eq "0" ]; then
-            $CONTAINER_STATION_DIR/bin/system-docker-compose exec owncloud occ config:app:delete enterprise_key license-key
+            $DC occ config:app:delete enterprise_key license-key >> $LOG_FILE 2>&1
         else
             licenses="$(echo $qlicense | jq -r '.result' | jq -c -M . | base64)"
-            $CONTAINER_STATION_DIR/bin/system-docker-compose exec owncloud occ config:app:set --value "${licenses//[^[:alnum:]]/}" enterprise_key license-key
+            $DC occ config:app:set --value "${licenses//[^[:alnum:]]/}" enterprise_key license-key >> $LOG_FILE 2>&1
         fi
     ;;
 
