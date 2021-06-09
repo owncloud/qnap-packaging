@@ -55,7 +55,12 @@ case "$1" in
         _load_images
 
         mkdir -p data/owncloud_tmp
-        chmod data/owncloud_tmp
+        chmod 777 data/owncloud_tmp
+
+        mkdir -p custom
+        touch custom/user.config.php
+        touch custom/user-crontab
+        chmod 644 custom/user.config.php custom/user-crontab
 
         $CONTAINER_STATION_DIR/bin/system-docker-compose up -d --remove-orphans
 

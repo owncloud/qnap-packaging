@@ -25,6 +25,8 @@ services:
     volumes:
       - ${PWD}/data/owncloud:/mnt/data
       - ${PWD}/data/owncloud_tmp:/tmp
+      - ${PWD}/custom/user.config.php:/etc/templates/user.config.php
+      - ${PWD}/custom/user-crontab:/etc/cron.d/user-crontab
     healthcheck:
       test: ["CMD", "/usr/bin/healthcheck"]
       interval: 60s
