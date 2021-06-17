@@ -1,3 +1,13 @@
 {
-  "extends": ["config:base"]
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["github>owncloud-ops/renovate-presets:base"],
+  "packageRules": [
+    {
+      "description": "Automerge digest updates (usually security patches)",
+      "groupName": "docker digests",
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["pin", "digest"],
+      "commitMessageExtra": ""
+    }
+  ]
 }
