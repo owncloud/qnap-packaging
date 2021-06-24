@@ -55,7 +55,7 @@ case "$1" in
         _load_images
         
         mkdir -p data/owncloud_tmp
-        chmod 777 data/owncloud_tmp
+        chmod 1777 data/owncloud_tmp
         
         mkdir -p custom
         touch custom/user.config.php
