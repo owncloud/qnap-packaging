@@ -6,6 +6,8 @@ CONTAINER_STATION_DIR=$(/sbin/getcfg container-station Install_Path -f $QPKG_CON
 QPKG_PROXY_FILE=/etc/container-proxy.d/$QPKG_NAME
 OWNCLOUD_ROOT=$(/sbin/getcfg $QPKG_NAME Install_Path -f $QPKG_CONF)
 
+LOG_FILE=/dev/null
+
 CRON_JOB="*/5 * * * *  $OWNCLOUD_ROOT/owncloud.sh license-handler"
 CRON_FILE=/etc/config/crontab
 
@@ -17,10 +19,10 @@ _load_images() {
         DOCKER_IMAGES=$(cat $DOCKER_IMAGES_SOURCE)
         
         for docker_image in $DOCKER_IMAGES; do
-            $CONTAINER_STATION_DIR/bin/system-docker inspect $docker_image
+            $CONTAINER_STATION_DIR/bin/system-docker inspect $docker_image >> $LOG_FILE 2>&1
             exit_status=$?
             if [ ! $exit_status -eq 0 ]; then
-                cat $OWNCLOUD_ROOT/docker-images/$(echo ${docker_image//[^[:alnum:]]/_}.tar) | $CONTAINER_STATION_DIR/bin/system-docker load
+                cat $OWNCLOUD_ROOT/docker-images/$(echo ${docker_image//[^[:alnum:]]/_}.tar) | $CONTAINER_STATION_DIR/bin/system-docker load >> $LOG_FILE 2>&1
             fi
         done
     fi
@@ -62,7 +64,7 @@ case "$1" in
         touch custom/user-crontab
         chmod 644 custom/user.config.php custom/user-crontab
         
-        $CONTAINER_STATION_DIR/bin/system-docker-compose up -d --remove-orphans
+        $CONTAINER_STATION_DIR/bin/system-docker-compose up -d --remove-orphans >> $LOG_FILE 2>&1
         
         grep -qF "$CRON_JOB" "$CRON_FILE"  || echo "$CRON_JOB" | tee -a "$CRON_FILE"
         crontab $CRON_FILE
@@ -72,7 +74,7 @@ case "$1" in
     ;;
     
     stop)
-        $CONTAINER_STATION_DIR/bin/system-docker-compose down --remove-orphans
+        $CONTAINER_STATION_DIR/bin/system-docker-compose down --remove-orphans >> $LOG_FILE 2>&1
         
         _proxy_stop
         _proxy_reload
@@ -107,7 +109,6 @@ case "$1" in
         count="$(echo $qlicense | jq -r '.result' | jq -r 'map(select(.status == "valid"))' | jq length)"
         
         DC="$CONTAINER_STATION_DIR/bin/system-docker-compose exec -T owncloud"
-        LOG_FILE=/dev/null
         if [ "$count" -eq "0" ]; then
             $DC occ config:app:delete enterprise_key license-key >> $LOG_FILE 2>&1
         else
