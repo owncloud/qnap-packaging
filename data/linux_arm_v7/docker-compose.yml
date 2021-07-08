@@ -3,7 +3,7 @@ version: "3"
 
 services:
   owncloud:
-    image: owncloud/qnap:10.7.0-arm32v7@sha256:d43a0ffa2190736559e2bc58f3e4457dd7e1a8d5eb55bd692b67249fdb75abca
+    image: owncloud/qnap:10.8.0-beta2-arm32v7@sha256:a986726d283b2f2808ed0660a6af8e423cd13b4f010212f6d2bba5f35f9461f2
     restart: always
     ports:
       - "127.0.0.1:11409:8080"
@@ -11,22 +11,20 @@ services:
       - db
       - redis
     environment:
+      - OWNCLOUD_OVERWRITE_WEBROOT=/owncloud
       - OWNCLOUD_DB_HOST=db
       - OWNCLOUD_DB_NAME=owncloud
       - OWNCLOUD_DB_PASSWORD=owncloud
       - OWNCLOUD_DB_TYPE=pgsql
       - OWNCLOUD_DB_USERNAME=owncloud
       - OWNCLOUD_MYSQL_UTF8MB4=true
-      - OWNCLOUD_OVERWRITE_WEBROOT=/owncloud
       - OWNCLOUD_REDIS_ENABLED=true
       - OWNCLOUD_REDIS_HOST=redis
-      - OWNCLOUD_UPDATE_CHECKER=false
-      - OWNCLOUD_LICENSE_KEY=none
-      - OWNCLOUD_LICENSE_CLASS=OCA\QNAP\QnapLicense
     volumes:
       - ${PWD}/data/owncloud:/mnt/data
-      - ${PWD}/licenses/:/mnt/licenses/
       - ${PWD}/data/owncloud_tmp:/tmp
+      - ${PWD}/custom/user.config.php:/etc/templates/user.config.php
+      - ${PWD}/custom/user-crontab:/etc/cron.d/user-crontab
     healthcheck:
       test: ["CMD", "/usr/bin/healthcheck"]
       interval: 60s

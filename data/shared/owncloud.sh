@@ -6,7 +6,9 @@ CONTAINER_STATION_DIR=$(/sbin/getcfg container-station Install_Path -f $QPKG_CON
 QPKG_PROXY_FILE=/etc/container-proxy.d/$QPKG_NAME
 OWNCLOUD_ROOT=$(/sbin/getcfg $QPKG_NAME Install_Path -f $QPKG_CONF)
 
-CRON_JOB="*/5 * * * *  $OWNCLOUD_ROOT/owncloud.sh get-licenses"
+LOG_FILE=/dev/null
+
+CRON_JOB="*/5 * * * *  $OWNCLOUD_ROOT/owncloud.sh license-handler"
 CRON_FILE=/etc/config/crontab
 
 cd $OWNCLOUD_ROOT
@@ -17,10 +19,10 @@ _load_images() {
         DOCKER_IMAGES=$(cat $DOCKER_IMAGES_SOURCE)
         
         for docker_image in $DOCKER_IMAGES; do
-            $CONTAINER_STATION_DIR/bin/system-docker inspect $docker_image
+            $CONTAINER_STATION_DIR/bin/system-docker inspect $docker_image >> $LOG_FILE 2>&1
             exit_status=$?
             if [ ! $exit_status -eq 0 ]; then
-                cat $OWNCLOUD_ROOT/docker-images/$(echo ${docker_image//[^[:alnum:]]/_}.tar) | $CONTAINER_STATION_DIR/bin/system-docker load
+                cat $OWNCLOUD_ROOT/docker-images/$(echo ${docker_image//[^[:alnum:]]/_}.tar) | $CONTAINER_STATION_DIR/bin/system-docker load >> $LOG_FILE 2>&1
             fi
         done
     fi
@@ -52,10 +54,17 @@ _register_license() {
 case "$1" in
     start)
         _register_license
-        $0 get-licenses
         _load_images
         
-        $CONTAINER_STATION_DIR/bin/system-docker-compose up -d --remove-orphans
+        mkdir -p data/owncloud_tmp
+        chmod 1777 data/owncloud_tmp
+        
+        mkdir -p custom
+        touch custom/user.config.php
+        touch custom/user-crontab
+        chmod 644 custom/user.config.php custom/user-crontab
+        
+        $CONTAINER_STATION_DIR/bin/system-docker-compose up -d --remove-orphans >> $LOG_FILE 2>&1
         
         grep -qF "$CRON_JOB" "$CRON_FILE"  || echo "$CRON_JOB" | tee -a "$CRON_FILE"
         crontab $CRON_FILE
@@ -65,7 +74,7 @@ case "$1" in
     ;;
     
     stop)
-        $CONTAINER_STATION_DIR/bin/system-docker-compose down --remove-orphans
+        $CONTAINER_STATION_DIR/bin/system-docker-compose down --remove-orphans >> $LOG_FILE 2>&1
         
         _proxy_stop
         _proxy_reload
@@ -83,9 +92,29 @@ case "$1" in
         $0 stop
     ;;
     
-    get-licenses)
-        mkdir -p $OWNCLOUD_ROOT/licenses
-        qlicense_tool installed_list -n -d -a $QPKG_NAME > $OWNCLOUD_ROOT/licenses/owncloud.json
+    license-handler)
+        which base64 &>/dev/null || {
+            base64impl="./base64.sh"
+        }
+        
+        which openssl &>/dev/null && {
+            base64impl="openssl enc -base64"
+        }
+        
+        which base64 &>/dev/null && {
+            base64impl="base64"
+        }
+        
+        qlicense="$(qlicense_tool installed_list -a $QPKG_NAME)"
+        count="$(echo $qlicense | jq -r '.result' | jq -r 'map(select(.status == "valid"))' | jq length)"
+        
+        DC="$CONTAINER_STATION_DIR/bin/system-docker-compose exec -T owncloud"
+        if [ "$count" -eq "0" ]; then
+            $DC occ config:app:delete enterprise_key license-key >> $LOG_FILE 2>&1
+        else
+            licenses="$(echo $qlicense | jq -r '.result' | jq -c -M . | $base64impl)"
+            $DC occ config:app:set --value "${licenses//[^[:alnum:]]/}" enterprise_key license-key >> $LOG_FILE 2>&1
+        fi
     ;;
     
     callback_success)
@@ -109,18 +138,22 @@ case "$1" in
     ;;
     
     after_activate)
+        $0 license-handler
         $0 callback_success
     ;;
     
     after_deactivate)
+        $0 license-handler
         $0 callback_success
     ;;
     
     after_expired)
+        $0 license-handler
         $0 callback_success
     ;;
     
     after_extend)
+        $0 license-handler
         $0 callback_success
     ;;
     
