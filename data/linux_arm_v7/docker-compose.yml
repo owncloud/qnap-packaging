@@ -11,17 +11,15 @@ services:
       - db
       - redis
     environment:
+      - OWNCLOUD_OVERWRITE_WEBROOT=/owncloud
       - OWNCLOUD_DB_HOST=db
       - OWNCLOUD_DB_NAME=owncloud
       - OWNCLOUD_DB_PASSWORD=owncloud
       - OWNCLOUD_DB_TYPE=pgsql
       - OWNCLOUD_DB_USERNAME=owncloud
       - OWNCLOUD_MYSQL_UTF8MB4=true
-      - OWNCLOUD_OVERWRITE_WEBROOT=/owncloud
       - OWNCLOUD_REDIS_ENABLED=true
       - OWNCLOUD_REDIS_HOST=redis
-      - OWNCLOUD_UPDATE_CHECKER=false
-      - OWNCLOUD_LICENSE_CLASS=\OCA\QNAP\QnapLicense
     volumes:
       - ${PWD}/data/owncloud:/mnt/data
       - ${PWD}/data/owncloud_tmp:/tmp
