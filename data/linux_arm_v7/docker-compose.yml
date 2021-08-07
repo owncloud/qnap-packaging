@@ -3,7 +3,7 @@ version: "3"
 
 services:
   owncloud:
-    image: owncloud/qnap:10.8.0-arm32v7@sha256:29377c6af1e335cc1697f9fc8fc731bb54efc1078bb5c23c87435abe81f4fbfe
+    image: owncloud/qnap:10.8.0-arm32v7@sha256:0b82e7b9a148155513a138bbd99c5ff5a13d83f2b7aae92287dd6c2f39b79923
     restart: always
     ports:
       - "127.0.0.1:11409:8080"
@@ -34,7 +34,7 @@ services:
       driver: "local"
 
   db:
-    image: arm32v7/postgres:13.3-alpine@sha256:b84ef6b7f7ee1ff105c26d4c96ea2e06e1505cd0015e460335d2a55826e6a007
+    image: arm32v7/postgres:13.3-alpine@sha256:6046df556ee979c8cfc2fe77a74cab9568c22b05cbc69461c2baa19510862b17
     environment:
       - POSTGRES_DB=owncloud
       - POSTGRES_PASSWORD=owncloud
