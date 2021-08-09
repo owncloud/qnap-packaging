@@ -35,6 +35,7 @@ _proxy_reload() {
 
 _proxy_start() {
 	cat > $QPKG_PROXY_FILE << EOF
+RequestHeader set X-Forwarded-Proto "expr=%{req:X-Apache-Proxy}"
 ProxyRequests off
 ProxyPass /owncloud http://127.0.0.1:11409
 ProxyPassReverse /owncloud http://127.0.0.1:11409
