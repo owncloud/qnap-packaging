@@ -34,7 +34,7 @@ services:
       driver: "local"
 
   db:
-    image: postgres:13.3-alpine@sha256:d6d19dc53f53d11ab5b4ed2d7fdb04b7a585f4cf08ec0a19acf38b75d326282d
+    image: postgres:13.3-alpine@sha256:e98a69a836391fe94d889a6ccfbb21257b93f47b2794da114a82ef23e342342f
     environment:
       - POSTGRES_DB=owncloud
       - POSTGRES_PASSWORD=owncloud
@@ -45,7 +45,7 @@ services:
       driver: "local"
 
   redis:
-    image: redis:6.2.5-alpine@sha256:324faae103b6af6dd7085748ca8ea99b9e32785a0f3f80f62ce6f2d5185aeaaa
+    image: redis:6.2.5-alpine@sha256:c8612cb52f56304c895c5e346cc79a9459990074797bea8a549df573b41a4cd3
     restart: always
     volumes:
       - ${PWD}/data/redis:/data
