@@ -3,7 +3,7 @@ version: "3"
 
 services:
   owncloud:
-    image: owncloud/qnap:10.8.0-arm32v7@sha256:3314819f974efe0cbbc80fa6a24c059f5db238e43161c9b7ab550b9284091dcf
+    image: owncloud/qnap:10.8.0-arm32v7@sha256:3653cce235f5a4023051539f4fec7e3f6cde5abf4e01aab094f4663614068ed9
     restart: always
     ports:
       - "127.0.0.1:11409:8080"
@@ -45,7 +45,7 @@ services:
       driver: "local"
 
   redis:
-    image: arm32v7/redis:6.2.5-alpine@sha256:350c39df8aaddf9176d96b569bdb5630ab9234d57478ec3ecfd347f83536b7c3
+    image: arm32v7/redis:6.2.5-alpine@sha256:af6d78340f94b28024ebd2f65975a56b1ec1891628ed462088492956da29c0a4
     restart: always
     volumes:
       - ${PWD}/data/redis:/data
