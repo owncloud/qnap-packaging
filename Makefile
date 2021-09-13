@@ -18,12 +18,11 @@ build-qpkg-only: _build
 _build:
 	@if [ ! -f /.dockerenv ]; then \
 		docker run --rm -t --name=build-owncloud-qpkg-$$$$ \
-			-e QNAP_CODESIGNING_TOKEN=$(CODESIGNING_TOKEN) \
 			-v /var/run/docker.sock:/var/run/docker.sock \
 			-v $(PWD):/work \
 			$(BUILDER_IMAGE_NAME) make _build; \
     else \
-		echo -e "$(COLOR_BLUE)### Build QPKG ...$(COLOR_RESET)"; \
+		echo "$(COLOR_BLUE)### Build QPKG ...$(COLOR_RESET)"; \
 		/usr/share/qdk2/QDK/bin/qbuild --build-dir $(BUILD_DIR); \
     fi
 
@@ -36,7 +35,7 @@ docker-images-linux_amd64:
 	@for img in $(shell awk -F'image: ' '/image:/ {print $$2}' data/linux_amd64/docker-compose.yml); do \
 		ref=$$(echo $${img} | sed -e 's/\(:\).*\(@\)/\1\2/' | sed 's/://'); \
 		tarball=$${img//[^[:alnum:]]/_}.tar; \
-		echo -e "$(COLOR_YELLOW)### Save container image to a tar archive: $${tarball}$(COLOR_RESET)"; \
+		echo "$(COLOR_YELLOW)### Save container image to a tar archive: $${tarball}$(COLOR_RESET)"; \
 		mkdir -p data/linux_amd64/docker-images; \
 		echo $${img} >> data/linux_amd64/docker-images/DOCKER_IMAGES; \
 		skopeo --insecure-policy copy docker://$${ref} docker-archive:./data/linux_amd64/docker-images/$${tarball}; \
@@ -48,7 +47,7 @@ docker-images-linux_arm_v7:
 	@for img in $(shell awk -F'image: ' '/image:/ {print $$2}' data/linux_arm_v7/docker-compose.yml); do \
 		ref=$$(echo $${img} | sed -e 's/\(:\).*\(@\)/\1\2/' | sed 's/://'); \
 		tarball=$${img//[^[:alnum:]]/_}.tar; \
-		echo -e "$(COLOR_YELLOW)### Save container image to a tar archive: $${tarball}$(COLOR_RESET)"; \
+		echo "$(COLOR_YELLOW)### Save container image to a tar archive: $${tarball}$(COLOR_RESET)"; \
 		mkdir -p data/linux_arm_v7/docker-images; \
 		echo $${img} >> data/linux_arm_v7/docker-images/DOCKER_IMAGES; \
 		skopeo --insecure-policy copy docker://$${ref} docker-archive:./data/linux_arm_v7/docker-images/$${tarball}; \
@@ -56,6 +55,6 @@ docker-images-linux_arm_v7:
 
 .PHONY: clean
 clean:
-	@echo -e "$(COLOR_BLUE)### Remove build files ...$(COLOR_RESET)"
+	@echo "$(COLOR_BLUE)### Remove build files ...$(COLOR_RESET)"
 	rm -rf data/*/docker-images
 	rm -rf build{,.*}/ tmp.*/
