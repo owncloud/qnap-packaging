@@ -8,9 +8,23 @@ def build(ctx):
         "name": "build",
         "steps": [
             {
+                "name": "prepare-signing",
+                "image": "owncloudci/alpine",
+                "commands": [
+                    "bash signing-preparation.sh",
+                ],
+                "environment": {
+                    "CODE_SIGNING_CERT_PW": {
+                        "from_secret": "windows_cert_password",
+                    },
+                    "CODE_SIGNING_CERT": {
+                        "from_secret": "windows_cert",
+                    },
+                },
+            },
+            {
                 "name": "docker-images",
-                "image": "alpine:latest",
-                "pull": "always",
+                "image": "owncloudci/alpine",
                 "commands": [
                     "apk add make skopeo",
                     "make docker-images",
@@ -21,12 +35,20 @@ def build(ctx):
                 "image": "owncloudci/qnap-qpkg-builder:latest",
                 "pull": "always",
                 "commands": [
+                    "patch /usr/share/qdk2/QDK/bin/qbuild fix_offline_signing.diff",
                     "make build-qpkg-only",
                 ],
             },
             {
+                "name": "rename-unsigned",
+                "image": "owncloudci/alpine",
+                "commands": [
+                    "bash rename-unsigned.sh",
+                ],
+            },
+            {
                 "name": "list",
-                "image": "alpine:latest",
+                "image": "owncloudci/alpine",
                 "pull": "always",
                 "commands": [
                     "ls -lah build",
