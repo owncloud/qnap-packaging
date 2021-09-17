@@ -56,8 +56,14 @@ def build(ctx):
             },
             {
                 "name": "release",
-                "image": "plugins/github-release:1",
+                "image": "plugins/github-release",
                 "pull": "always",
+                "environment": {
+                    # set this manually, since this differs on our internal drone
+                    "DRONE_REPO_NAME": "qnap-packaging",
+                    "DRONE_REPO_OWNER": "owncloud",
+                    "DRONE_REPO": "owncloud/qnap-packaging",
+                },
                 "settings": {
                     "api_key": {
                         "from_secret": "github_token",
