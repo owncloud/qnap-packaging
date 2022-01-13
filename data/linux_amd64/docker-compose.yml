@@ -3,7 +3,7 @@ version: "3"
 
 services:
   owncloud:
-    image: owncloud/qnap:10.8.0-amd64@sha256:c3f33b2230629a92432ff255dec2751aa5c3d2f3654bd9d2aedc195ad208224b
+    image: owncloud/qnap:10.8.0-amd64@sha256:974b563fa50a7579601691df351cb6c671940ff11c79897544a80476af257d57
     restart: always
     ports:
       - "127.0.0.1:11409:8080"
@@ -34,7 +34,7 @@ services:
       driver: "local"
 
   db:
-    image: postgres:13.5-alpine@sha256:3898a71fa3566cba89a8b9570718c78365cacc366fa924cb7052fd4756199928
+    image: postgres:13.5-alpine@sha256:8048dd080d627956cc6d9f49eae706b1e71efadcca33f7b16f7a2357d9ff96ef
     environment:
       - POSTGRES_DB=owncloud
       - POSTGRES_PASSWORD=owncloud
@@ -45,7 +45,7 @@ services:
       driver: "local"
 
   redis:
-    image: redis:6.2.6-alpine@sha256:50fc99c529b81432a592fa76354783d7fc3ba479a92fc810cbf669138c4138b7
+    image: redis:6.2.6-alpine@sha256:4bed291aa5efb9f0d77b76ff7d4ab71eee410962965d052552db1fb80576431d
     restart: always
     volumes:
       - ${PWD}/data/redis:/data
