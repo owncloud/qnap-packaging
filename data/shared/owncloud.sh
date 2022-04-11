@@ -34,11 +34,15 @@ _proxy_reload() {
 }
 
 _proxy_start() {
+    CONTAINER_IDS=$(system-docker-compose ps -q owncloud)
+    CONTAINER_ID=$(echo $CONTAINER_IDS | head -n 1)
+    CONTAINER_IP=$(system-docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $CONTAINER_ID)
+
 	cat > $QPKG_PROXY_FILE << EOF
 RequestHeader set X-Forwarded-Proto "expr=%{req:X-Apache-Proxy}"
 ProxyRequests off
-ProxyPass /owncloud http://127.0.0.1:11409
-ProxyPassReverse /owncloud http://127.0.0.1:11409
+ProxyPass /owncloud http://$CONTAINER_IP:8080
+ProxyPassReverse /owncloud http://$CONTAINER_IP:8080
 EOF
     _proxy_reload
 }
