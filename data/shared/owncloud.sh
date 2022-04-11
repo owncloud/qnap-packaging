@@ -34,9 +34,9 @@ _proxy_reload() {
 }
 
 _proxy_start() {
-    CONTAINER_IDS=$(system-docker-compose ps -q owncloud)
+    CONTAINER_IDS=$($CONTAINER_STATION_DIR/bin/system-docker-compose ps -q owncloud)
     CONTAINER_ID=$(echo $CONTAINER_IDS | head -n 1)
-    CONTAINER_IP=$(system-docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $CONTAINER_ID)
+    CONTAINER_IP=$($CONTAINER_STATION_DIR/bin/system-docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $CONTAINER_ID)
 
 	cat > $QPKG_PROXY_FILE << EOF
 RequestHeader set X-Forwarded-Proto "expr=%{req:X-Apache-Proxy}"
