@@ -34,7 +34,7 @@ services:
       driver: "local"
 
   db:
-    image: postgres:13.6-alpine@sha256:a003a8ef4aed3ec511525efe9230da56d5368f53f6033cb241154dd6781ffd23
+    image: postgres:13.7-alpine@sha256:88b4d86d81a362b4a9b38cc8ed9766d2e4bfb98d731dda1542bead96982a866c
     environment:
       - POSTGRES_DB=owncloud
       - POSTGRES_PASSWORD=owncloud
