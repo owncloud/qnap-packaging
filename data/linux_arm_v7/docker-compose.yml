@@ -3,7 +3,7 @@ version: "3"
 
 services:
   owncloud:
-    image: owncloud/qnap:10.8.0-arm32v7@sha256:6be81bfbad6d240c7382a3927c7c878ef4e10264e3adcae0f88d099db1432005
+    image: owncloud/qnap:10.9.1-arm32v7@sha256:01e270e24a4b9529ffa8cf0c6b1b8567e070748dc4f858e3312a3219b55dcccf
     restart: always
     ports:
       - "127.0.0.1:11409:8080"
