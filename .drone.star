@@ -63,6 +63,7 @@ def build(ctx):
                     "DRONE_REPO_NAME": "qnap-packaging",
                     "DRONE_REPO_OWNER": "owncloud",
                     "DRONE_REPO": "owncloud/qnap-packaging",
+                    "DRONE_REPO_LINK": "https://github.com/owncloud/qnap-packaging"
                 },
                 "settings": {
                     "api_key": {
