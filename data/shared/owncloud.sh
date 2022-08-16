@@ -3,7 +3,7 @@ QPKG_CONF=/etc/config/qpkg.conf
 QPKG_NAME=ownCloud
 QPKG_DISPLAY_NAME=$(/sbin/getcfg $QPKG_NAME Display_Name -f $QPKG_CONF)
 CONTAINER_STATION_DIR=$(/sbin/getcfg container-station Install_Path -f $QPKG_CONF)
-QPKG_PROXY_FILE=/etc/container-proxy.d/$QPKG_NAME
+QPKG_PROXY_FILE=/etc/container-proxy.d/$QPKG_NAME.conf
 OWNCLOUD_ROOT=$(/sbin/getcfg $QPKG_NAME Install_Path -f $QPKG_CONF)
 
 LOG_FILE=/dev/null
