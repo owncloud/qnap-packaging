@@ -2,9 +2,15 @@
 QPKG_CONF=/etc/config/qpkg.conf
 QPKG_NAME=ownCloud
 QPKG_DISPLAY_NAME=$(/sbin/getcfg $QPKG_NAME Display_Name -f $QPKG_CONF)
-CONTAINER_STATION_DIR=$(/sbin/getcfg container-station Install_Path -f $QPKG_CONF)
 QPKG_PROXY_FILE=/etc/container-proxy.d/$QPKG_NAME.conf
 OWNCLOUD_ROOT=$(/sbin/getcfg $QPKG_NAME Install_Path -f $QPKG_CONF)
+
+CONTAINER_STATION_DIR=$(/sbin/getcfg container-station Install_Path -f $QPKG_CONF)
+if $CONTAINER_STATION_DIR/bin/system-docker compose &>/dev/null; then
+  DOCKER_COMPOSE_COMMAND="$CONTAINER_STATION_DIR/bin/system-docker compose"
+else
+  DOCKER_COMPOSE_COMMAND="$CONTAINER_STATION_DIR/bin/system-docker-compose"
+fi
 
 LOG_FILE=/dev/null
 
@@ -65,7 +71,7 @@ case "$1" in
         touch custom/user-crontab
         chmod 644 custom/user.config.php custom/user-crontab
 
-        $CONTAINER_STATION_DIR/bin/system-docker-compose up -d --remove-orphans >> $LOG_FILE 2>&1
+        $DOCKER_COMPOSE_COMMAND up -d --remove-orphans >> $LOG_FILE 2>&1
 
         grep -qF "$CRON_JOB" "$CRON_FILE"  || echo "$CRON_JOB" | tee -a "$CRON_FILE"
         crontab $CRON_FILE
@@ -75,7 +81,7 @@ case "$1" in
     ;;
 
     stop)
-        $CONTAINER_STATION_DIR/bin/system-docker-compose down --remove-orphans >> $LOG_FILE 2>&1
+        $DOCKER_COMPOSE_COMMAND down --remove-orphans >> $LOG_FILE 2>&1
 
         _proxy_stop
         _proxy_reload
@@ -109,7 +115,7 @@ case "$1" in
         qlicense="$(qlicense_tool installed_list -a $QPKG_NAME)"
         count="$(echo $qlicense | jq -r '.result' | jq -r 'map(select(.status == "valid"))' | jq length)"
 
-        DC="$CONTAINER_STATION_DIR/bin/system-docker-compose exec -T owncloud"
+        DC="$DOCKER_COMPOSE_COMMAND exec -T owncloud"
         if [ "$count" -eq "0" ]; then
             $DC occ config:app:delete enterprise_key license-key >> $LOG_FILE 2>&1
         else
@@ -159,19 +165,19 @@ case "$1" in
     ;;
 
     debug-container-status)
-        $CONTAINER_STATION_DIR/bin/system-docker-compose ps
+        $DOCKER_COMPOSE_COMMAND ps
     ;;
 
     debug-owncloud-logs)
-        $CONTAINER_STATION_DIR/bin/system-docker-compose logs -f owncloud
+        $DOCKER_COMPOSE_COMMAND logs -f owncloud
     ;;
 
     debug-db-logs)
-        $CONTAINER_STATION_DIR/bin/system-docker-compose logs -f db
+        $DOCKER_COMPOSE_COMMAND logs -f db
     ;;
 
     debug-redis-logs)
-        $CONTAINER_STATION_DIR/bin/system-docker-compose logs -f redis
+        $DOCKER_COMPOSE_COMMAND logs -f redis
     ;;
 
     *)
