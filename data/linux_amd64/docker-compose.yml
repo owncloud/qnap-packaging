@@ -45,7 +45,7 @@ services:
       driver: "local"
 
   redis:
-    image: redis:7.0.4-alpine@sha256:dc1b954f5a1db78e31b8870966294d2f93fa8a7fba5c1337a1ce4ec55f311bc3
+    image: redis:7.4.0-alpine@sha256:c35af3bbcef51a62c8bae5a9a563c6f1b60d7ebaea4cb5a3ccbcc157580ae098
     restart: always
     volumes:
       - ${PWD}/data/redis:/data
